@@ -41,7 +41,7 @@ class CleanData(object):
 
     def set_col_title(self, title):
         title = title[:-5]
-        title = title.replace("_EUR_", "").replace("_DOLAR_", "")
+        title = title.replace("_EUR_", "").replace("_DOLAR_", "").replace("_","")
         return title
 
     def set_window(self, df):
