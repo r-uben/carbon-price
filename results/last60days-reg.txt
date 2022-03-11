@@ -1,0 +1,24 @@
+\begin{table}
+\caption{}
+\label{}
+\begin{center}
+\begin{tabular}{ll}
+\hline
+                      & ICEDEU3    \\
+\hline
+CO1COMDTY             & 0.50***    \\
+                      & (0.12)     \\
+CLJ2COMBCOMDTY        & 1.63***    \\
+                      & (0.18)     \\
+GASEUEQUITY           & 1.78***    \\
+                      & (0.32)     \\
+WK2COMBCOMDTY         & -17.86***  \\
+                      & (1.61)     \\
+GT1CDEGSACT24AVINEXMW & -0.00      \\
+                      & (0.00)     \\
+R-squared             & 0.99       \\
+R-squared Adj.        & 0.99       \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}

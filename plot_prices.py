@@ -5,9 +5,15 @@ import matplotlib.dates as mdates
 
 
 
+
+
 class PlotPrices(object):
 
-    def __init__(self, df, lastNdays = 0, name = 'default'):
+    def __init__(self, df, lastNdays = 0, name = 'default', format = 'png', dpi = 100):
+
+        self.dpi = dpi
+        self.format = format
+
         if lastNdays == 0:
             self.df     = df
             # Replace zeros with NaNs
@@ -38,19 +44,19 @@ class PlotPrices(object):
     def plot_prices(self):
         # See: https://stackoverflow.com/questions/30146921/matplotlib-adjusting-date-spacing-on-the-x-axis
         # See: https://stackoverflow.com/questions/6390393/matplotlib-make-tick-labels-font-size-smaller
-        fig, axs = plt.subplots(len(self.cols), figsize=(8,10), dpi=100)
+        fig, axs = plt.subplots(len(self.cols), figsize=(16,20), dpi=2000)
         for i in range(len(self.cols)):
             prices = self.get_vector_prices(i)
             ax = axs[i]
             ax.grid(True, linewidth=0.7, linestyle='--')
-            ax.xaxis.set_major_locator(mdates.WeekdayLocator(byweekday=9, interval=2))
-            ax.xaxis.set_minor_locator(mdates.WeekdayLocator(byweekday=9, interval=2))
+            ax.xaxis.set_major_locator(mdates.WeekdayLocator(byweekday=3, interval=2))
+            ax.xaxis.set_minor_locator(mdates.WeekdayLocator(byweekday=3, interval=2))
             ax.tick_params(axis='both', which='major', labelsize=12)
             ax.tick_params(axis='both', which='minor', labelsize=12)
             ax.plot(prices, linewidth=1.5, color="darkred", label=self.cols[i])
             ax.legend(loc="upper left", fontsize=10)
             fig.autofmt_xdate()
         if self.name != 'default':
-            plt.savefig('figures/' + self.name +".eps", format='eps')
+            plt.savefig('figures/' + self.name + "." + self.format, format= self.format)
         else:
             plt.show()
