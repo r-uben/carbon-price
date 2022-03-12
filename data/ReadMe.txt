@@ -164,3 +164,24 @@ https://ec.europa.eu/eurostat/statistics-explained/index.php?title=Electricity_p
 GLOBAL ECONOMIC POLICY UNCERTAINTY INDEX
 
 https://www.policyuncertainty.com/global_monthly.html
+
+---------------------------------------
+
+ENTSOE
+
+Full documentation: https://transparency.entsoe.eu/content/static_content/Static%20content/web%20api/Guide.html#_c_2
+
+https://thesmartinsights.com/how-to-query-data-from-the-entso-e-transparency-platform-using-python/
+
+
+
+Viewer: https://transparency.entsoe.eu/dashboard/show
+
+
+–––––––––––––––––––––––––––––––––––––––––
+
+ENTSOG
+
+https://transparency.entsog.eu/pdf/TP_REG715_Documentation_TP_API_v1.3.pdf
+
+Viewer: https://transparency.entsog.eu/#/map

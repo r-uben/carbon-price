@@ -26,11 +26,11 @@ if __name__=="__main__":
     df = pd.read_csv('data/1st_df.csv', index_col=[0])
     df1 = df.copy()
 
-    plt = PlotPrices(df=df1, lastNdays=150, name='1st_df_last150days_prices', format='png', dpi=100)
-    plt.plot_prices()
+    # plt = PlotPrices(df=df1, lastNdays=150, name='1st_df_last150days_prices', format='png', dpi=100)
+    # plt.plot_prices()
 
-    plt = PlotPrices(df=df1, lastNdays=90, name='1st_df_last90days_prices', format='png', dpi=100)
-    plt.plot_prices()
+    # plt = PlotPrices(df=df1, lastNdays=90, name='1st_df_last90days_prices', format='png', dpi=100)
+    # plt.plot_prices()
 
     cols = df.columns.tolist()
     idx  = df.columns.tolist()
@@ -52,6 +52,9 @@ if __name__=="__main__":
     sum = summary_col(results=reg, float_format='%0.2f', stars=True, info_dict=None,  drop_omitted=True)
     tex    = sum.as_latex()
     create_txt('since2019-reg', tex)
+    print()
+    print("###################")
+    print("SINCE 2019")
     print(sum)
 
     df2  = df.iloc[:150]
@@ -61,6 +64,9 @@ if __name__=="__main__":
     sum = summary_col(results=reg, float_format='%0.2f', stars=True, info_dict=None,  drop_omitted=True)
     tex    = sum.as_latex()
     create_txt('last150days-reg', tex)
+    print()
+    print("###################")
+    print("LAST 150 DAYS")
     print(sum)
 
     df2  = df.iloc[:60]
@@ -69,6 +75,9 @@ if __name__=="__main__":
     reg = sm.OLS(y.astype(float), X.astype(float)).fit(cov_type='HAC', cov_kwds={'maxlags':12}) 
     sum = summary_col(results=reg, float_format='%0.2f', stars=True, info_dict=None,  drop_omitted=True)
     tex    = sum.as_latex()
+    print()
+    print("###################")
+    print("LAST 60 DAYS")
     create_txt('last60days-reg', tex)
     print(sum)
     
