@@ -9,9 +9,10 @@ import matplotlib.dates as mdates
 
 class PlotPrices(object):
 
-    def __init__(self, df, lastNdays = 0, name = 'default', format = 'png', dpi = 100):
+    def __init__(self, df, lastNdays = 0, name = 'default', linewidth = 1,  format = 'eps', dpi = 100):
 
         self.dpi = dpi
+        self.linewidth = linewidth
         self.format = format
 
         if lastNdays == 0:
@@ -27,6 +28,19 @@ class PlotPrices(object):
         #
         self.T      = self.df.index.tolist()
         self.name   = name
+
+    def get_name(self, name):
+        names = {
+            'ICEDEU3'               : 'EUA Futures (EUR)',
+            'CO1COMDTY'             : 'Generic 1st, Brent Future (EUR)',
+            'CLJ2COMBCOMDTY'        : 'WTI Crude Oil Future, Apr22 (EUR',
+            'GASEUEQUITY'           : 'Naturgy Energy Group SA, Gas equity (EUR)',
+            'WK2COMBCOMDTY'         : 'Wheat Futures (EUR)',
+            'GT1CDEGSACT24AVINEXMW' : 'Germany Gas Index',
+            'GFRURUEUINDEX'         : 'Gas supply from Rusia',
+            'EGTPNTRNINDEX'         : 'Russia Gas Flow (MCM/D)'
+        }
+        return names[name]
 
     def get_relevant_dates(self):
         self.init_year  = int(self.T[-1][:4])
@@ -53,7 +67,7 @@ class PlotPrices(object):
             ax.xaxis.set_minor_locator(mdates.WeekdayLocator(byweekday=3, interval=2))
             ax.tick_params(axis='both', which='major', labelsize=12)
             ax.tick_params(axis='both', which='minor', labelsize=12)
-            ax.plot(prices, linewidth=1.5, color="darkred", label=self.cols[i])
+            ax.plot(prices, linewidth=self.linewidth, color="darkred", label=self.get_name(self.cols[i]))
             ax.legend(loc="upper left", fontsize=10)
             fig.autofmt_xdate()
         if self.name != 'default':
