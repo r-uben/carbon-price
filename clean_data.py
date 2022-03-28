@@ -1,4 +1,5 @@
 import pandas as pd
+from aux import Aux
 
 class CleanData(object):
 
@@ -15,13 +16,10 @@ class CleanData(object):
         self.df = pd.DataFrame()
 
 
-    def find_file(self, name, type):
-        if type == 'xlsx':
-            return "data/raw_files/" + name + ".xlsx"
-
     def read_data(self):
         for title in self.file_titles:
-            df = pd.read_excel(self.find_file(title, 'xlsx'), sheet_name="Worksheet", index_col=None, na_values=['NA'], usecols="A,B", names=["Date", "PX_LAST"],dtype=str)
+            file = self.aux.find_file(title, 'xlsx')
+            df = pd.read_excel(file, sheet_name="Worksheet", index_col=None, na_values=['NA'], usecols="A,B", names=["Date", "PX_LAST"],dtype=str)
             df = self.set_date_as_index(df)
             new_title = self.set_col_title(title)
             self.columns.append(new_title)

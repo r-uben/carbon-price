@@ -1,0 +1,25 @@
+The main idea is to use a reduced-form vector autoregression (VAR) that contains the fundamental drivers of the real price of oil,
+\begin{equation}
+	y_t = c + \sum_{i=1}^p \Phi_i y_{t-i} + \varepsilon_t,
+\end{equation}
+where $y_{t}\in\R^4$ is a vector of monthly data, $c\in\R^4$ is a vector of intercepts, and $\Phi_i\R^{4\times 4}$, for $i=1,\ldots, p$, are the coefficient matrices with $p$ indicating the number of lags. As always, $\varepsilon_t$ are the white-noise innovations.
+
+The four variables are:
+\begin{enumerate}[wide, itemsep=0cm, topsep=0cm]
+	\item Percent change in global crude oil production;
+	\item Estimate of the change in global crude oil inventories;
+	\item Log of the real price of crude oil as measured by the US refiner acquisition cost of imported crude oil (RAC) deflated by the US consumer price index;
+	\item Index of global real economic activity (REA).
+\end{enumerate}
+
+\subsection{Alternative indicators of Global Real Economic Activity}
+
+\input{secs/subsecs/alternative-indicators}
+
+\subsection{Bayesian Shrinkage}
+
+\input{secs/subsecs/bayesian-shrinkage}
+
+\subsection{Towards A New Indicator of Global Economic Conditions}
+
+\input{secs/subsecs/new-indicator}

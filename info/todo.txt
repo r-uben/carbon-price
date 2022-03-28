@@ -1,0 +1,6 @@
+WHAT I HAVE DONE:
+
+
+I'm requesting acces here to get API KEY: https://www.barchart.com/ondemand/api
+
+I'm cleaning dataframes. Please look at "data-to-use" folder

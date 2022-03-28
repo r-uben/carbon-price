@@ -1,3 +1,40 @@
+####
+#### DESCRIPTION OF EACH FILE 
+####
+
+1. CCI_03_22.csv
+
+This file contains data of the Consumer Confidence Index (CCI) (see https://data.oecd.org/leadind/consumer-confidence-index-cci.htm) 
+
+Monthly data from 2003 to 2022.02
+
+2. PC_CHG_19_22.csv
+
+This file contains data of the Passenger Car Registrations (see https://data.oecd.org/transport/passenger-car-registrations.htm)
+
+Monthly data from 2019 to 2022.01
+
+3. CAR_REGISTRATION_90_22.csv
+
+New passenger car registrations by country EU+EFTA+UK
+
+4. EPUIDX_87_22.csv
+
+News coverage about policy-related economic uncertainty (see  )
+
+5. DTWEXBGS.csv
+
+Nominal Broad US Dollar index
+
+6. TWEXB.csv
+
+Trade Weighted Dollar Index: Broad, Goods (Discontinued), from 1995 to 2020. No longer updated, they suggest DTWEXBGS (see the previous file).
+
+
+####
+#### GENERAL DESCRIPTION OF THE DATA:
+####
+
 1. ICEDEU3 INDE
 
 (EUA DAILY FUTURES IN EUROS)
@@ -150,6 +187,7 @@ END DATE: 03/08/2022
 
 PERIOD: D
 UNIT: MCM/D
+
 
 
 --------------------------------------

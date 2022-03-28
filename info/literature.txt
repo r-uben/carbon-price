@@ -1,0 +1,15 @@
+Literature to review (own interest):
+
+1. Adams S, Acheampong AO. Reducing carbon emissions: The role of renewable energy and democracy (2019)
+
+2. Dutta A, Bouri E, Noor MH. Return and volatility linkages between CO2 emission and clean energy stock prices (2018)
+
+3. Hammoudeh S, Ajmi AN, Moni K. Relationship between green bonds and financial and environmental variables. A novel time-varying causality (2020)
+
+
+
+%% EMPIRICAL METHODS
+
+1. Liang XS. Unraveling the cause-effect relation between time series (2014)
+
+2. Liang XS. Information flow and causality as rigorous notions ab initio (2016)

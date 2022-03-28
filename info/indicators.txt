@@ -1,0 +1,90 @@
+##########
+########## SOME USEFUL INDICATORS
+##########
+
+–––––––––––––––––––––
+
+Real Economy Activity:
+
+1. OECD Consumer Confidence Index. PRESENT AND CLEANED
+
+	Broadest available measure to gauge future outlook for households' consumption spending and savings.
+
+2. Conference Board Leading Economic Index. MISSING
+
+	Cosely watched leading indicator with a proven track record of signaling peaks and troughs in the business cycle
+
+3. World industrial Production Index. PRESENT AND CLEANED
+
+	Includes production measures from manufacturing, minig, and utilities, sectors that are closely tied to energy in that they use oil and refined petroleum products in the production process.
+
+
+	https://sites.google.com/site/cjsbaumeister/research
+––––––––––––––––––––––
+
+Commodity Prices:
+
+Copper. Important in manufacturing, construction, and infrastructure.
+
+	In my opinion, wheat or fertilizers should be also studied. Why? It's important in cattle-raising sectors (related to CO2 allowances?)
+
+––––––––––––––––––––––
+
+Financial indicators:
+
+Two main financial indicators: Foreign exchange and stock returns. 
+
+1. Broad real trade-weighted US dollar index (FOR FOREIGN EXCHANGE) PRESENT BUT ONLY UNTIL 2020
+
+	Oil prices are quoted in dollars and changes in the exchange rate often translate into changes in petroleum consumption in oil-importing countries. VERY INTERESTING. WHAT ABOUT RUBLES NOW?
+
+2. MSCI WORLD INDEX (FOR STOCK RETURNS). MISSING
+
+	Stocks from companies throughout the world and represents a broad cross-section of global markets.
+
+3. EXCESS RETURN EARNED ON THE FAMA-FRENCH (FF) PORTFOLIO FOR THE TRANSPORTATION SECTOR (FOR ENERGY DEMAND). MISSING
+
+	The transportation sector is obviously th emost energ-intensive sector, so excess returns in this sector should provide forward-looking information for energy consumption.
+
+––––––––––––––––––––––
+
+Transportation:
+
+Two real indicators of transportation demand.
+
+1. Registrations of vehicles are indicative of the future demand for gasoline and diesel. (Maybe some lagged values here?) PRESENT UNTIL 2020 
+
+	SEE: https://www.acea.auto/figure/motor-vehicle-registrations-in-europe-since-1990-by-country/
+
+2. FLor measure of traffic volume  (UR total vehicle miles traveled) MISSING
+
+	I suggest to use a freight rate index: https://fbx.freightos.com DAILY PRICES AVAILABLE ONLY FOR PREMIUM USERS. IT SHOULD BE INTERESTING
+
+–––––––––––––––––––––––
+
+Uncertainty measures.
+
+1. Geopolitical risk index developed by Caldara and Iacoviello (2018). MISSING
+
+	This should reflect increasing supply disruption risks and translate into rising concerns about the future availability of oil which will influence energt demand behaviour worldwide.
+
+2. Longrun oil price uncertainty. MISSING
+
+	Defined as realised volatility computed based on daily returns for WTI futures contracts with a maturity of 12 months
+
+––––––––––––––––––––––
+
+Energy-related indicators. PRESENT (ENTSOE AND ENSTOG)
+
+1. Broadest energy-specific measure is energy production and electritity distribution for the EU28.
+
+	Indicator for the overall intensity of economic activity since the production of most goods and services requires electricity (Arora and Lieskovsky, 2014).
+
+
+#############################################################################################################################
+#############################################################################################################################
+#############################################################################################################################
+
+How to deal with these indicators?
+
+They extract the first principal component from this unbalanced panel of 16 variables by applying the EM algorithm recursively and use this estimated factor to replace the economic activity measure in our four-variable consumption-based BVAR(12) model with stochastich volatility.

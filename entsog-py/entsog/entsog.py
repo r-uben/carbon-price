@@ -1645,7 +1645,9 @@ class EntsogPandasClient(EntsogRawClient):
         return data   
 
     @week_limited
-    def query_aggregated_data(self, start: pd.Timestamp, end: pd.Timestamp,
+    def query_aggregated_data(self, 
+        start: pd.Timestamp, 
+        end: pd.Timestamp,
         country_code : Union[Country, str] = None,
         balancing_zone : Union[BalancingZone, str] = None,
         period_type : str = 'day',
