@@ -3,11 +3,13 @@ from tty         import CC
 from unicodedata import name
 import pandas    as pd
 from clean_data  import CleanData
+from entsoe_getter import EntsoeGetter
 from plot_prices import PlotPrices
 from idx_cci     import CCIidx
 from idx_wip     import WIP
 from idx_epu     import EPU
 from power_generation import PowerGeneration
+from entsog_getter import EntsogGetter
 
 
 from pathlib import Path
@@ -48,7 +50,16 @@ if __name__=="__main__":
         #epu.idx_epu()
 
         pow_gen = PowerGeneration()
-        pow_gen.power_generation()
+        #pow_gen.power_generation()
+        # 'DE_GASPOOL', 'DE_NCG', 'UK', 'ES', 'IT', 'PL', 'EE_LV', 'UA'
+        # country_codes = ['DE']
+        # indicators= ['GCV']
+        # entsog = EntsogGetter(start=20220101,end=20220106, country_codes=country_codes, indicators=indicators)
+        # entsog.entsog_getter()
+
+        country_codes = ['UK', 'DE', 'FR', 'IT', 'IT_NORD', 'ES','BE', 'SE', 'UA', 'RU'] #, 'IT_NORD', 'NO_1', 'NO_2', 'NO_3', 'NO_4', 'NO_5', 'ES', 'FR']
+        entsoe = EntsoeGetter(country_codes=country_codes, start=20100101, end=20220320)
+        entsoe.entsoe_getter()
 
     # df = pd.read_csv('data/1st_df.csv', index_col=[0])
     # df1 = df.copy()

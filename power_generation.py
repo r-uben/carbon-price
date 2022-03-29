@@ -22,6 +22,7 @@ class PowerGeneration(object):
             path = self.aux.find_file(name, 'csv')
             self.dfs[country] = pd.read_csv(path)
 
+
     def power_generation(self):
         
         print(self.dfs['ES'])

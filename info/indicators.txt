@@ -58,7 +58,7 @@ Two real indicators of transportation demand.
 
 2. FLor measure of traffic volume  (UR total vehicle miles traveled) MISSING
 
-	I suggest to use a freight rate index: https://fbx.freightos.com DAILY PRICES AVAILABLE ONLY FOR PREMIUM USERS. IT SHOULD BE INTERESTING
+	I suggest to use a freight rate index: https://fbx.freightos.com DAILY PRICES AVAILABLE ONLY FOR PREMIUM USERS. IT SHOULD BE INTERESTING TO EXPLORE THIS THING. ONLY DATA FROM 2020.
 
 –––––––––––––––––––––––
 

@@ -22,3 +22,6 @@ country_codes = ['DE_LU', 'IT_NORD', 'NO_1', 'NO_2', 'NO_3', 'NO_4', 'NO_5', 'ES
 for country in country_codes:
     df = client.query_generation(country_code, start=start, end=end)
     df.to_csv('data/generation' + country + '.csv')
+
+
+    
