@@ -199,9 +199,6 @@ class Country(enum.Enum):
     TR = "TR",   "Turkey"
     UA = "UA",   "Ukraine"
 
-
-
-
 class Area(enum.Enum):
     '''
     ENUM containing 2 things about an Area: OperatorKeys, OperatorLabels

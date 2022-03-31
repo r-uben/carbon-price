@@ -1,4 +1,6 @@
+from email import header
 import pandas as pd
+from aux import Aux
 from entsoe import EntsoePandasClient
 
 class EntsoeGetter(object):
@@ -100,17 +102,18 @@ class EntsoeGetter(object):
     UA_IPS =        '10Y1001C--000182', 'Ukraine IPS CTA',                              'Europe/Kiev',
     XK =            '10Y1001C--00100H', 'Kosovo/ XK CA / XK BZN',                       'Europe/Rome'
     '''
+
     def __init__(self, start, end, country_codes) -> None:
 
+        self.aux        = Aux()
+        self.t0         = str(start)[2:4]
+        self.t1         = str(end)[2:4]
         self.start      = pd.Timestamp(str(start), tz='Europe/Brussels')
         self.end        = pd.Timestamp(str(end), tz='Europe/Brussels')
         self.country_codes = country_codes
         self.client     = EntsoePandasClient(api_key='c7f6fea4-4222-4c61-a6a8-4a23ac1f1a7d')
         self.df         = {}
-        self.by_energy  = {}
-        self.energy_zip = {}
-
-    def energies(self):
+        self.default_energy = 'OIL'
         self.energy_zip = {
             'BIO'           : 'Biomass',
             'COALGAS'       : 'Fossil Coal-derived gas',
@@ -121,44 +124,84 @@ class EntsoeGetter(object):
             'HYDROSTORAGE'  : 'Hydro Pumped Storage',
             'HYDRORIVER'    : 'Hydro Run-of-river and poundage',
             'HDRORESERVOIR' : 'Hydro Water Reservoir',
+            'MARINE'        : 'Marine',
             'NUC'           : 'Nuclear',
-            'SOL'           : 'Solar',
+            'SUN'           : 'Solar',
             'WASTE'         : 'Waste',
             'WINDONSHORE'   : 'Wind Onshore',
             'WINDOFFSHORE'  : 'Wind Offshore'            
         }
 
-    def country_energy(self, country_code, energy_code):
-        return country_code + '_' + energy_code
+    def set_header(self, country_code, header):
+        return country_code + '_' + header
 
-    def get_df(self, country_code):
-        df = self.client.query_generation(country_code, start=self.start, end=self.end)
+    def set_df(self, country_code, method):
+        if method == 'prices':
+            df = self.client.query_day_ahead_prices(country_code, start=self.start, end=self.end)
+        if method == 'generation':
+            df = self.client.query_generation(country_code, start= self.start, end = self.end)
+        if method == 'green':
+            df = self.client.query_wind_and_solar_forecast(country_code, start=self.start, end=self.end)
+        if method == 'imbalance_prices':
+            df = self.client.imbalance_prices(country_code, start=self.start, end=self.end)
+        if method == 'generation_per_plant':
+            df = self.client.query_generation_per_plant(country_code, start=self.start, end=self.end)
+        if method == 'import':
+            df = self.client.query_import(country_code, start=self.start, end=self.end)
         return df
 
-    def get_col(self, energy, type):
+    def set_col(self, energy, type):
         return (energy, type)
 
-    def get_aggregated(self, energy_code):
-        self.energies()
+    def set_title(self, title):
+        return title + '_' + self.t0 + '_' +self.t1
+
+    def set_df_of_generation(self, energy_code):
+        df = {}
         energy = self.energy_zip[energy_code]
+        for country_code in self.country_codes:
+            country_specific_df = self.set_df(country_code, 'generation')
+            print(country_specific_df)
+            if energy in [x[0] for x in country_specific_df.columns]:
+                col                 = self.set_col(energy, 'Actual Aggregated')
+                if col in country_specific_df:
+                    col_to_save         = self.set_header(country_code, energy_code)
+                    df[col_to_save] = country_specific_df.loc[:, col]
+                else: 
+                    continue
+            else: 
+                continue
+        # Construct the Data Frame
+        df = self.aux.concatenate_weird_df(df)
+        self.aux.save_df(df, self.set_title('GENERATION' + energy_code))
+
+    def set_df_of_prices(self):
+        df = {}
         count = 0
         for country_code in self.country_codes:
-            country_specific_df = self.get_df(country_code)
-            col                 = self.get_col(energy, 'Actual Aggregated')
-            if col in country_specific_df:
-                col_to_save         = self.country_energy(country_code, energy_code)
-                self.by_energy[col_to_save] = country_specific_df.loc[:, col]
-                if count == 0:
-                    time_col = country_specific_df.index.tolist()
-                    count += 1
-        # Construct the Data Frame
-        if bool(self.by_energy):
-            self.by_energy          = pd.DataFrame(dict([(k, pd.Series(v)) for k,v in self.by_energy.items()]))
-            print(self.by_energy)
-        else:
-            print('No data available of Actual Aggregated of ' + self.energy_zip[energy_code])
+            country_specific_df = self.set_df(country_code, 'prices')
+            header              = self.set_header(country_code, 'Eprice')
+            df[header]          = country_specific_df.iloc[:]
+        df = self.aux.concatenate_weird_df(df)
+        self.aux.save_df(df, self.set_title('ELECTRICITYPRICES'))
 
-    def entsoe_getter(self):
-        self.get_aggregated('BIO')
-        # for country_code in self.country_codes:
-        #     self.df[country_code] = self.get_df(country_code)
+    def set_df_of_green_forecast(self):
+        df = {}
+        for country_code in self.country_codes:
+            country_specific_df = self.set_df(country_code, 'green')
+            header              = self.set_header(country_code, 'Egreen')
+            for col in df.columns:
+                df[header]          = country_specific_df.loc[:, col]
+        df = self.aux.concatenate_weird_df(df)
+        self.aux.save_df(df, self.set_title('GENERATIONGREEN'))
+
+    def entsoe_getter(self, param, energy = None):
+        param = param.lower().replace(' ', '_')
+        if param == 'prices':
+            self.set_df_of_prices()
+        if param == 'generation':
+            if energy == None:
+                energy == self.default_energy
+            self.set_df_of_generation(energy)
+        if param == 'green':
+            self.set_df_of_green_forecast()
