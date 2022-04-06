@@ -1,5 +1,6 @@
-from email import header
 import pandas as pd
+import numpy as np
+
 from aux import Aux
 from entsoe import EntsoePandasClient
 
@@ -103,17 +104,21 @@ class EntsoeGetter(object):
     XK =            '10Y1001C--00100H', 'Kosovo/ XK CA / XK BZN',                       'Europe/Rome'
     '''
 
-    def __init__(self, start, end, country_codes) -> None:
+    DAY_DIVISION = 'hourly'
+    ENERGY_CODE  = 'SUN'
+
+    def __init__(self, t0, t1, country_codes) -> None:
 
         self.aux        = Aux()
-        self.t0         = str(start)[2:4]
-        self.t1         = str(end)[2:4]
-        self.start      = pd.Timestamp(str(start), tz='Europe/Brussels')
-        self.end        = pd.Timestamp(str(end), tz='Europe/Brussels')
         self.country_codes = country_codes
+        self.t0: str    = t0
+        self.t1: str    = t1
+        self.init: str  = t0
+        self.ending: str = t1
+        self.start      = pd.Timestamp(t0, tz='Europe/Brussels')
+        self.end        = pd.Timestamp(t1, tz='Europe/Brussels')
         self.client     = EntsoePandasClient(api_key='c7f6fea4-4222-4c61-a6a8-4a23ac1f1a7d')
         self.df         = {}
-        self.default_energy = 'OIL'
         self.energy_zip = {
             'BIO'           : 'Biomass',
             'COALGAS'       : 'Fossil Coal-derived gas',
@@ -123,7 +128,7 @@ class EntsoeGetter(object):
             'GEO'           : 'Geothermal',
             'HYDROSTORAGE'  : 'Hydro Pumped Storage',
             'HYDRORIVER'    : 'Hydro Run-of-river and poundage',
-            'HDRORESERVOIR' : 'Hydro Water Reservoir',
+            'HYDRORESERVOIR': 'Hydro Water Reservoir',
             'MARINE'        : 'Marine',
             'NUC'           : 'Nuclear',
             'SUN'           : 'Solar',
@@ -131,6 +136,29 @@ class EntsoeGetter(object):
             'WINDONSHORE'   : 'Wind Onshore',
             'WINDOFFSHORE'  : 'Wind Offshore'            
         }
+        self.day_division = {
+            'hourly'    : 1,
+            'half'      : 2,
+            'quarterly' : 4
+        }
+        self.time_index: list =  []
+
+    def formatted_date(fn):
+        '''
+            This function takes initial and end dates as a string and updates them to 
+            a format %Y-%m-%d (year, month, date)
+        '''
+        def wrap(self: 'EntsoeGetter', *args, **kwargs):
+            if len(str(self.t0)) == 4:
+                    self.t0 = int(str(self.t0) + '0101')
+                    self.t1 = int(str(self.t1) + '0101')
+            self.t0         = pd.to_datetime(self.t0, format='%Y%m%d')
+            self.init       = str(self.t0.year)[2:]
+            self.t1         = pd.to_datetime(self.t1, format='%Y%m%d')
+            self.ending     = str(self.t1.year)[2:]
+            self.time_index = pd.date_range(self.t0, self.t1, freq='D').date
+            return fn(self, *args, *kwargs)
+        return wrap
 
     def set_header(self, country_code, header):
         return country_code + '_' + header
@@ -154,27 +182,57 @@ class EntsoeGetter(object):
         return (energy, type)
 
     def set_title(self, title):
-        return title + '_' + self.t0 + '_' +self.t1
+        '''
+            This function sets the format of our title where the date is included
+            just by referring to the last two digits of the year
+        '''
+        return title + '_' + self.init + '_' + self.ending
 
-    def set_df_of_generation(self, energy_code):
+    def set_daily_index(self, df):
+        df.index = pd.to_datetime(df.index)
+        df       = df.groupby(pd.Grouper(freq='D', level=0)).sum()
+        ## Take date as our index
+        df.index = df.index.date
+        # Just in case there have been more dates that have been added
+        df       = df.loc[self.t0:self.t1, :]
+        return df
+
+    @formatted_date
+    def set_df_of_generation(self, energy_code=ENERGY_CODE, day_division=DAY_DIVISION):
+        '''
+            This function saves a dataframe with the generation of electircity (by country and kind of energy).
+        '''
+        ## dataframe which is gonna be constructed
         df = {}
+        ## indicator for the time-division of the day: it can be quarterly (q=4, each 15min),
+        ## hourly (q=1, each hour) or half hour (q=2, each 30min).
+        q = self.day_division[day_division]
+        ## energy generation (kWh) to be added
         energy = self.energy_zip[energy_code]
+        ## we start the loop among all the countries that are gonna be added
         for country_code in self.country_codes:
+            ## df of all generation for each country
             country_specific_df = self.set_df(country_code, 'generation')
-            print(country_specific_df)
+            ## is the energy to be added within the generation data of the country that
+            ## are we scrapping in this loop?
             if energy in [x[0] for x in country_specific_df.columns]:
+                ## if yes, we take the specific column 
                 col                 = self.set_col(energy, 'Actual Aggregated')
                 if col in country_specific_df:
+                    ## if the column belongs also the the country-specific-df, then re-name
+                    ## the column with a better understandable name
                     col_to_save         = self.set_header(country_code, energy_code)
+                    ## save the column
                     df[col_to_save] = country_specific_df.loc[:, col]
-                else: 
-                    continue
-            else: 
-                continue
-        # Construct the Data Frame
+        ## Join everything with a function that sorts differences among df
+        #self.aux.save_df(pd.DataFrame(df), 'whathappens1')
         df = self.aux.concatenate_weird_df(df)
-        self.aux.save_df(df, self.set_title('GENERATION' + energy_code))
+        ## Convert hourly to daily
+        df = self.set_daily_index(df)
+        ## Save the dataframe
+        self.aux.save_df(df, self.set_title('GENERATION_' + energy_code))
 
+    @formatted_date
     def set_df_of_prices(self):
         df = {}
         count = 0
@@ -183,7 +241,10 @@ class EntsoeGetter(object):
             header              = self.set_header(country_code, 'Eprice')
             df[header]          = country_specific_df.iloc[:]
         df = self.aux.concatenate_weird_df(df)
-        self.aux.save_df(df, self.set_title('ELECTRICITYPRICES'))
+        # Convert hourly to daily
+        df = self.set_daily_index(df)
+        # Save dataframe
+        self.aux.save_df(df, self.set_title('ELECTRICITYPRICES_'))
 
     def set_df_of_green_forecast(self):
         df = {}
@@ -192,16 +253,14 @@ class EntsoeGetter(object):
             header              = self.set_header(country_code, 'Egreen')
             for col in df.columns:
                 df[header]          = country_specific_df.loc[:, col]
-        df = self.aux.concatenate_weird_df(df)
+        df      = self.aux.concatenate_weird_df(df)
         self.aux.save_df(df, self.set_title('GENERATIONGREEN'))
 
-    def entsoe_getter(self, param, energy = None):
+    def entsoe_getter(self, param, energy_code=ENERGY_CODE, day_division=DAY_DIVISION):
         param = param.lower().replace(' ', '_')
         if param == 'prices':
             self.set_df_of_prices()
         if param == 'generation':
-            if energy == None:
-                energy == self.default_energy
-            self.set_df_of_generation(energy)
+            self.set_df_of_generation(energy_code, day_division)
         if param == 'green':
             self.set_df_of_green_forecast()

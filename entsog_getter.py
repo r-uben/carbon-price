@@ -6,7 +6,7 @@ from aux import Aux
 class EntsogGetter(object):
 
 
-    def __init__(self, country_codes, start, end) -> None:
+    def __init__(self, start, end, country_codes) -> None:
         self.aux = Aux()
         self.t0         = str(start)[2:4]
         self.t1         = str(end)[2:4]
@@ -33,15 +33,12 @@ class EntsogGetter(object):
         columns = ['indicator', 'operator_key', 'direction_key', 'year', 'month', 'day', 'unit', 'value']
         for country_code in self.country_codes:
             df = {}
-            print(country_code)
             country_specific_df = self.client.query_aggregated_data(start=self.start, end=self.end, country_code=country_code)
             for col in columns:
                 header              = self.set_header(country_code, col)
                 df[header]          = country_specific_df.loc[:,col]
-            print(df)
             df = pd.DataFrame(df)
             self.aux.save_df(df, self.set_title('GASFLOW' + '_' + country_code))
-
 
     def entsog_getter(self):
         self.set_df_of_physical_flow()

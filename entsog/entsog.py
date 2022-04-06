@@ -283,7 +283,7 @@ class EntsogRawClient:
     "tsoBuildingNumber",
     "tsoPostOfficeBox",
     "tsoZipCode",
-    "tsoCity",
+    "tsoCity",e
     "tsoContactName",
     "tsoContactPhone",
     "tsoContactEmail",

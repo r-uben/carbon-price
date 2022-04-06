@@ -9,10 +9,14 @@ class Aux():
             return "data/raw_files/" + name + ".csv"
 
     def save_df(self, df, name):
-        df.to_csv('data/ready-to-use/'+ name + '.csv')
-
-    def set_header(self, country_code, header):
-        return country_code + '_' + header
+        df.to_csv('data/ready-to-use/final/'+ name + '.csv')
+        
 
     def concatenate_weird_df(self, df):
-        return pd.DataFrame(dict([(k, pd.Series(v)) for k,v in df.items()]))
+        return pd.DataFrame(dict([(k, v) for k,v in df.items()]))
+
+    def get_key(self, my_dict, val):
+        for key, value in my_dict.items():
+            if val in value:
+                return key
+        return None
