@@ -2,7 +2,7 @@ import pandas as pd
 from aux import Aux
 import numpy as np
 
-class CleanData(object):
+class SecuritiesData(object):
 
     def __init__(self, file_titles, t0, t1, csv_title):
         self.aux = Aux()
@@ -16,12 +16,12 @@ class CleanData(object):
         self.dfs = {}
         self.df = pd.DataFrame()
         self.headers = {
-            'WK2COMBCOMDTY' : 'futWHEAT',
-            'GFRURUEUINDEXMILLM3' : 'gasflowRUStoDE',
-            'ICEDEU3'      : 'futEUA',
-            'CO1COMDTY'    : 'futBRENT',
-            'CLJ2COMBCOMDTY' : 'futWIT',   
-            'GASEUEQUITY'   : 'eqGAS'
+            'WK2COMBCOMDTY'         : 'futWHEAT',
+            'GFRURUEUINDEXMILLM3'   : 'gasflowRUStoDE',
+            'ICEDEU3'               : 'futEUA',
+            'CO1COMDTY'             : 'futBRENT',
+            'CLJ2COMBCOMDTY'        : 'futWIT',   
+            'GASEUEQUITY'           : 'eqGAS'
         }
     
     def set_date_as_index(self, df):
@@ -56,6 +56,6 @@ class CleanData(object):
         self.df.index = pd.to_datetime(self.df.index).date
         self.df = self.df.loc[self.t0:self.t1,:]
 
-    def CleanData(self, title):
+    def securities_data(self, title):
         self.set_df()
         self.aux.save_df(self.df, self.set_name(title))

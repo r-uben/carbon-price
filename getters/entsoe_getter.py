@@ -1,3 +1,4 @@
+from decimal import MIN_EMIN
 import pandas as pd
 import numpy as np
 
@@ -105,6 +106,9 @@ class EntsoeGetter(object):
     '''
 
     DAY_DIVISION = 'hourly'
+    SUM   = 'sum'
+    MAX   = 'max'
+    MIN   = 'min'
     ENERGY_CODE  = 'SUN'
 
     def __init__(self, t0, t1, country_codes) -> None:
@@ -123,7 +127,7 @@ class EntsoeGetter(object):
             'BIO'           : 'Biomass',
             'COALGAS'       : 'Fossil Coal-derived gas',
             'GAS'           : 'Fossil Gas',
-            'HARDCOAL'      : 'Fosil Hard coal',
+            'HARDCOAL'      : 'Fossil Hard coal',
             'OIL'           : 'Fossil Oil',
             'GEO'           : 'Geothermal',
             'HYDROSTORAGE'  : 'Hydro Pumped Storage',
@@ -188,9 +192,14 @@ class EntsoeGetter(object):
         '''
         return title + '_' + self.init + '_' + self.ending
 
-    def set_daily_index(self, df):
+    def set_daily_index(self, df, daily_type=SUM):
         df.index = pd.to_datetime(df.index)
-        df       = df.groupby(pd.Grouper(freq='D', level=0)).sum()
+        if daily_type == 'sum' or daily_type == 'aggregated':
+            df       = df.groupby(pd.Grouper(freq='D', level=0)).sum()
+        if daily_type == 'max':
+            df       = df.groupby(pd.Grouper(freq='D', level=0)).max()
+        if daily_type == 'min':
+            df       = df.groupby(pd.Grouper(freq='D', level=0)).min()
         ## Take date as our index
         df.index = df.index.date
         # Just in case there have been more dates that have been added
@@ -241,10 +250,17 @@ class EntsoeGetter(object):
             header              = self.set_header(country_code, 'Eprice')
             df[header]          = country_specific_df.iloc[:]
         df = self.aux.concatenate_weird_df(df)
-        # Convert hourly to daily
-        df = self.set_daily_index(df)
+        print(df)
+        # Consider daily data by taking the maxmimum of them
+        dfmax = self.set_daily_index(df,'max')
+        dfmax.columns = [x+'_max' for x in dfmax.columns]
+        # Consider daily data by taking the minium of them
+        dfmin = self.set_daily_index(df,'min')
+        dfmin.columns = [x+'_min' for x in dfmin.columns]
         # Save dataframe
-        self.aux.save_df(df, self.set_title('ELECTRICITYPRICES_'))
+        self.aux.save_df(df, self.set_title('ELECTRICITYPRICES'))
+        self.aux.save_df(dfmax, self.set_title('MAX_ELECTRICITYPRICES'))
+        self.aux.save_df(dfmin, self.set_title('MIN_ELECTRICITYPRICES'))
 
     def set_df_of_green_forecast(self):
         df = {}

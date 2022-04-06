@@ -1,0 +1,25 @@
+futEUA: futures price EUA
+	UNIT: EUR
+	Source: Bloomberg
+
+futBRENT: futures brent OIL 
+	UNIT: EUR
+	Source: Bloomberg
+
+futWIT: futures WIT OIL
+	UNIT: EUR
+	Source: Bloomberg
+
+eqGAS:  equity GAS (price from Naturgy SA)
+	UNIT: EUR
+	Source: Bloomberg
+
+gasflowRUStoDE: gas flow from Russia to Germany
+	UNIT: Million m3
+
+
+generation: just look the name
+	UNIT: MW
+
+prices electricity: 
+	UNIT: eur/mwh
